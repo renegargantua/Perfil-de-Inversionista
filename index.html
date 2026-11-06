@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Perfil de inversionista</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mu:#5d6b7c;--ac:#1f6feb;--bd:#dfe4ea;--ok:#1a7f4b;--md:#b7791f;--ag:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--card:#19212b;--tx:#e8edf3;--mu:#9aa7b6;--ac:#5aa0ff;--bd:#2b3644;--ok:#4cc38a;--md:#e6b450;--ag:#ff7b6b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10151c;--card:#19212b;--tx:#e8edf3;--mu:#9aa7b6;--ac:#5aa0ff;--bd:#2b3644;--ok:#4cc38a;--md:#e6b450;--ag:#ff7b6b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:660px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.6rem;margin:8px 0 4px}
+.sub{color:var(--mu);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px}
+.bar{height:6px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .25s}
+.n{color:var(--mu);font-size:.85rem}
+.tag{display:inline-block;font-size:.75rem;color:var(--ac);border:1px solid var(--ac);border-radius:12px;padding:1px 9px;margin-left:6px}
+h2{font-size:1.15rem;margin:8px 0 12px}
+h3{font-size:1rem;margin:18px 0 6px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin:8px 0;font:inherit;cursor:pointer}
+.opt:hover,.opt:focus-visible{border-color:var(--ac);outline:none}
+.nav{display:flex;justify-content:space-between;margin-top:14px}
+.btn{background:none;border:0;color:var(--ac);font:inherit;cursor:pointer;padding:6px 0}
+.btn.p{background:var(--ac);color:#fff;border-radius:10px;padding:11px 18px}
+.badge{display:inline-block;padding:4px 14px;border-radius:20px;color:#fff;font-weight:700;font-size:1.1rem}
+.sc{margin:16px 0 6px;height:12px;border-radius:8px;background:linear-gradient(90deg,var(--ok),var(--md),var(--ag));position:relative}
+.sc b{position:absolute;top:-5px;width:6px;height:22px;background:var(--tx);border-radius:3px;transform:translateX(-50%)}
+.dim{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:.9rem}
+.dim span{flex:0 0 150px}
+.dim div{flex:1;height:8px;background:var(--bd);border-radius:6px;overflow:hidden}
+.dim i{display:block;height:100%;background:var(--ac)}
+ul{padding-left:20px;margin:6px 0}
+.warn{background:var(--bg);border-left:4px solid var(--md);padding:10px 12px;border-radius:6px;margin-top:12px;font-size:.9rem}
+.note{color:var(--mu);font-size:.82rem;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>Descubre tu perfil de inversión</h1>
+<p class="sub">11 preguntas, sin registro. Tus respuestas no se envían ni se guardan: todo ocurre en tu navegador.</p>
+<div class="card" id="app"></div>
+<p class="note">Herramienta educativa basada en los tres elementos del perfil del cliente en servicios de inversión asesorados (conocimiento y experiencia, situación y capacidad financiera, y objetivos). No es asesoría ni recomendación: el perfil formal lo determina un intermediario autorizado.</p>
+</main>
+<script>
+const D={K:"Conocimiento y experiencia",F:"Situación y capacidad financiera",O:"Objetivos de inversión"};
+const Q=[
+{d:"K",q:"¿Con qué productos has invertido antes?",o:[["Con ninguno",1],["Cuentas de ahorro, depósitos a plazo o CETES",2],["Fondos de inversión, acciones o ETFs",3],["Además, derivados, notas estructuradas o inversión internacional",4]]},
+{d:"K",q:"¿Cuánto tiempo llevas invirtiendo?",o:[["Nunca he invertido",1],["Menos de 1 año",2],["De 1 a 5 años",3],["Más de 5 años",4]]},
+{d:"K",q:"Si las tasas de interés suben, ¿qué suele pasar con el precio de un bono ya emitido con tasa fija?",o:[["No sé",1],["Sube",2],["No cambia",2],["Baja",4]]},
+{d:"F",q:"¿Qué tan estables son tus ingresos?",o:[["Muy variables o inciertos",1],["Algo variables",2],["Estables",3],["Estables y con más de una fuente",4]]},
+{d:"F",q:"¿Qué porcentaje de tu patrimonio financiero representa este dinero?",o:[["Más del 75%",1],["Entre 50% y 75%",2],["Entre 25% y 50%",3],["Menos del 25%",4]]},
+{d:"F",q:"¿Cuántos meses de gastos tienes ahorrados como fondo de emergencia, aparte de esta inversión?",o:[["Ninguno",1],["Menos de 3 meses",2],["De 3 a 6 meses",3],["Más de 6 meses",4]]},
+{d:"F",q:"¿Qué porcentaje de tus ingresos mensuales destinas a pagar deudas?",o:[["Más del 40%",1],["Del 25% al 40%",2],["Del 10% al 25%",3],["Menos del 10% o no tengo deudas",4]]},
+{d:"O",q:"¿Cuál es tu objetivo principal con esta inversión?",o:[["Conservar el capital",1],["Superar la inflación con poco riesgo",2],["Hacer crecer el capital de forma constante",3],["Obtener el mayor rendimiento posible",4]]},
+{d:"O",q:"¿En cuánto tiempo podrías necesitar este dinero?",o:[["En menos de 1 año",1],["De 1 a 3 años",2],["De 3 a 7 años",3],["En más de 7 años",4]]},
+{d:"O",q:"¿Cuál es la pérdida máxima, en un año, que podrías aceptar sobre tu inversión?",o:[["0%: no acepto pérdidas",1],["Hasta 5%",2],["Hasta 15%",3],["Más de 15%",4]]},
+{d:"O",q:"Tu inversión baja 15% en un mes. ¿Qué harías?",o:[["Vendería todo",1],["Vendería una parte",2],["Mantendría la inversión",3],["Compraría más",4]]}
+];
+const P=[
+{n:"Conservador",c:"var(--ok)",d:"Prefieres proteger tu capital y evitar volatilidad, aun si el rendimiento esperado es menor.",a:["Valores gubernamentales de corto plazo","Depósitos bancarios de alta calificación (por ejemplo AAA)","Fondos de deuda de corto plazo y liquidez"]},
+{n:"Moderado",c:"var(--md)",d:"Buscas equilibrio entre crecimiento y seguridad. Toleras caídas temporales si tu horizonte es suficiente.",a:["Fondos de deuda de mayor plazo y fondos balanceados","Combinaciones de renta fija y renta variable","Notas estructuradas con capital protegido (poca liquidez, normalmente a vencimiento)"]},
+{n:"Agresivo",c:"var(--ag)",d:"Tienes horizonte largo, capacidad financiera y tolerancia a pérdidas. Aceptas alta volatilidad por mayor crecimiento potencial.",a:["Renta variable y ETFs de acciones, nacionales o internacionales","Notas estructuradas sin capital protegido","Instrumentos complejos o derivados solo si los entiendes bien y con un tamaño acotado"]}
+];
+const app=document.getElementById("app");let i=0,A=[];
+function show(){
+ if(i>=Q.length)return res();
+ const q=Q[i];
+ app.innerHTML=`<div class="bar"><i style="width:${i/Q.length*100}%"></i></div><div class="n">Pregunta ${i+1} de ${Q.length}<span class="tag">${D[q.d]}</span></div><h2>${q.q}</h2>`+
+ q.o.map((o,k)=>`<button class="opt" data-k="${k}">${o[0]}</button>`).join("")+
+ `<div class="nav">${i?'<button class="btn" id="b">← Anterior</button>':'<span></span>'}</div>`;
+ app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{A[i]=Q[i].o[+b.dataset.k][1];i++;show()});
+ const bk=document.getElementById("b");if(bk)bk.onclick=()=>{i--;show()};
+}
+function res(){
+ const S={K:[],F:[],O:[]};Q.forEach((q,k)=>S[q.d].push(A[k]));
+ const pct={};for(const k in S)pct[k]=(S[k].reduce((a,b)=>a+b,0)-S[k].length)/(3*S[k].length)*100;
+ const avg=(pct.K+pct.F+pct.O)/3;
+ let idx=avg<34?0:avg<67?1:2,cap="";
+ if(idx==2&&pct.F<40){idx=1;cap="Tu puntaje global sugería un perfil agresivo, pero tu capacidad financiera es limitada; por prudencia, el perfil se ajusta a moderado."}
+ else if(idx==2&&pct.K<30){idx=1;cap="Tu puntaje global sugería un perfil agresivo, pero tu conocimiento y experiencia aún son bajos; por prudencia, el perfil se ajusta a moderado."}
+ const p=P[idx];
+ app.innerHTML=`<div class="n">Tu resultado</div><h2>Perfil <span class="badge" style="background:${p.c}">${p.n}</span></h2>
+ <div class="sc"><b style="left:${avg}%"></b></div>
+ <p>${p.d}</p>${cap?`<div class="warn">${cap}</div>`:""}
+ <h3>Cómo salió cada elemento</h3>
+ ${Object.keys(D).map(k=>`<div class="dim"><span>${D[k]}</span><div><i style="width:${pct[k]}%"></i></div></div>`).join("")}
+ <h3>Productos que suelen ser congruentes con este perfil</h3><ul>${p.a.map(x=>`<li>${x}</li>`).join("")}</ul>
+ <div class="warn">Un asesor debe verificar la congruencia entre tu perfil y el del producto (riesgos, liquidez, volatilidad, costos). Esto es solo orientación educativa.</div>
+ <div class="nav"><button class="btn p" id="r">Volver a empezar</button></div>`;
+ document.getElementById("r").onclick=()=>{i=0;A=[];show()};
+}
+show();
+</script>
+</body>
+</html>
